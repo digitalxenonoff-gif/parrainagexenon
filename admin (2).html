@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — XENON TV Parrainage</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #8b0000;
+    --red-light: #b00000;
+    --gold: #f0c800;
+    --gold-dim: #c8a000;
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #1a1a1a;
+    --border: #2a2a2a;
+    --border-red: #3a0000;
+    --text: #e8e8e8;
+    --text-dim: #888;
+    --text-muted: #444;
+    --radius: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* LOGIN */
+  .login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .login-box {
+    background: var(--bg2);
+    border: 1px solid var(--border-red);
+    border-radius: 20px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  .login-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .login-logo span { color: var(--gold); }
+
+  .login-sub {
+    color: var(--text-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 32px;
+  }
+
+  .login-box label {
+    display: block;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .login-box input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+
+  .login-box input:focus { border-color: var(--red); }
+
+  .login-error {
+    background: #1a0d0d;
+    border: 1px solid var(--red);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #fca5a5;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .login-error.show { display: block; }
+
+  /* ADMIN APP */
+  .admin-app { display: none; }
+  .admin-app.show { display: block; }
+
+  .admin-header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .admin-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .admin-logo-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #fff;
+  }
+
+  .admin-logo-text span { color: var(--gold); }
+
+  .admin-badge {
+    background: var(--border-red);
+    border: 1px solid var(--red);
+    color: #fca5a5;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  .logout-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .logout-btn:hover { border-color: var(--red); color: #fca5a5; }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat-item {
+    background: var(--bg2);
+    padding: 16px 20px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ADMIN MAIN */
+  .admin-main {
+    padding: 24px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'Barlow', sans-serif;
+  }
+
+  .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .filter-btn.active { background: var(--border-red); border-color: var(--gold); color: var(--gold); }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .table-header {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr 1fr 1fr 120px;
+    gap: 12px;
+    padding: 12px 20px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr 1fr 1fr 120px;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    transition: background 0.15s;
+  }
+
+  .table-row:last-child { border-bottom: none; }
+  .table-row:hover { background: var(--bg3); }
+
+  .cell { font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cell-dim { font-size: 12px; color: var(--text-dim); }
+
+  .statut-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+
+  .badge-pending { background: #1a1200; color: var(--gold); border: 1px solid var(--gold-dim); }
+  .badge-validated { background: #0d1a0d; color: #4ade80; border: 1px solid #166534; }
+  .badge-sent { background: #0d0d2a; color: #818cf8; border: 1px solid #3730a3; }
+
+  .action-btn {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    font-family: 'Barlow', sans-serif;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .btn-validate { background: #14532d; color: #4ade80; }
+  .btn-validate:hover { background: #166534; }
+  .btn-send { background: #1e1b4b; color: #818cf8; }
+  .btn-send:hover { background: #3730a3; }
+  .btn-done { background: var(--bg3); color: var(--text-muted); cursor: default; }
+
+  /* DETAIL MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .modal-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+
+  .modal-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .modal-row:last-of-type { border-bottom: none; }
+  .modal-key { color: var(--text-muted); }
+  .modal-val { color: var(--text); font-weight: 600; text-align: right; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+  .modal-btn {
+    flex: 1;
+    padding: 11px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .modal-btn-close { background: var(--bg3); color: var(--text-dim); }
+  .modal-btn-close:hover { background: var(--border); }
+  .modal-btn-validate { background: #14532d; color: #4ade80; }
+  .modal-btn-validate:hover { background: #166534; }
+  .modal-btn-send { background: #1e1b4b; color: #818cf8; }
+  .modal-btn-send:hover { background: #3730a3; }
+
+  /* EMPTY */
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; }
+
+  /* BTN */
+  .btn {
+    width: 100%;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 24px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn:hover { background: var(--red-light); }
+
+  .badge-contact { background: #1a1000; color: #fb923c; border: 1px solid #7c2d12; }
+  .badge-pdf-ready { background: #0d0d2a; color: #818cf8; border: 1px solid #3730a3; }
+
+  /* MODAL PDF */
+  .pdf-upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    margin: 16px 0;
+  }
+  .pdf-upload-zone:hover { border-color: var(--gold); }
+  .pdf-upload-zone.has-file { border-color: #4ade80; background: #0d1a0d; }
+  .pdf-upload-zone p { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+  .pdf-upload-zone .pdf-name { font-size: 13px; color: #4ade80; font-weight: 600; margin-top: 6px; }
+
+  @media (max-width: 700px) {
+    /* HEADER */
+    .admin-header { padding: 10px 14px; }
+    .admin-logo-text { font-size: 15px; }
+    .admin-badge { font-size: 10px; padding: 3px 8px; }
+    .logout-btn { font-size: 11px; padding: 5px 10px; }
+
+    /* STATS */
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .stat-num { font-size: 22px; }
+    .stat-label { font-size: 10px; }
+    .stat-item { padding: 12px; }
+
+    /* ADMIN MAIN */
+    .admin-main { padding: 16px 14px; }
+
+    /* FILTERS */
+    .filters { gap: 6px; }
+    .filter-btn { font-size: 11px; padding: 6px 12px; }
+
+    /* TABLE */
+    .table-header, .table-row { grid-template-columns: 1fr 1fr 100px; font-size: 12px; padding: 10px 14px; }
+    .table-header .th-hide, .table-row .td-hide { display: none; }
+    .action-btn { font-size: 10px; padding: 4px 8px; }
+
+    /* MODAL */
+    .modal { padding: 20px 16px; }
+    .modal-title { font-size: 18px; }
+    .modal-row { font-size: 12px; }
+    .modal-btn { font-size: 13px; padding: 10px; }
+
+    /* LOGIN */
+    .login-box { padding: 28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">XENON<span> TV</span></div>
+    <div class="login-sub">Espace Administration</div>
+
+    <div id="login-error" class="login-error">⚠ Email ou mot de passe incorrect.</div>
+
+    <label>Email</label>
+    <input type="email" id="login-email" placeholder="xenoniptvofficiel@gmail.com" />
+
+    <label>Mot de passe</label>
+    <input type="password" id="login-password" placeholder="••••••••••" onkeydown="if(event.key==='Enter') login()" />
+
+    <button class="btn" onclick="login()">Accéder à l'administration →</button>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div class="admin-app" id="admin-app">
+
+  <!-- HEADER -->
+  <div class="admin-header">
+    <div class="admin-logo">
+      <img src="https://static.wixstatic.com/media/07062c_2c6773962344471e8b4196159401d989~mv2.png/v1/fill/w_115,h_133,al_c,lg_1,q_85,enc_avif,quality_auto/Untitled.png" width="28" style="margin-right:4px" />
+      <div class="admin-logo-text">XENON<span> TV</span></div>
+      <div class="admin-badge">ADMIN</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Déconnexion</button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num" id="stat-total">0</div>
+      <div class="stat-label">Total</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="stat-pending" style="color:#f0c800">0</div>
+      <div class="stat-label">En attente</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="stat-validated" style="color:#4ade80">0</div>
+      <div class="stat-label">Validés</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="stat-sent" style="color:#818cf8">0</div>
+      <div class="stat-label">Envoyés</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="admin-main">
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="filterBy('all', this)">Tous</button>
+      <button class="filter-btn" onclick="filterBy('pending', this)">En attente</button>
+      <button class="filter-btn" onclick="filterBy('validated', this)">Validés</button>
+      <button class="filter-btn" onclick="filterBy('sent', this)">Envoyés</button>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-header">
+        <div>Filleul</div>
+        <div class="th-hide">Parrain</div>
+        <div class="th-hide">Récompense</div>
+        <div>Date</div>
+        <div>Statut</div>
+        <div>Action</div>
+      </div>
+      <div id="admin-table-body">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <p>Aucun parrainage pour le moment.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL DETAIL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-content">
+    <div class="modal-title">Détail du parrainage</div>
+    <div id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- MODAL PDF CARTE CADEAU -->
+<div class="modal-overlay" id="modal-pdf-overlay" onclick="closePdfModal(event)">
+  <div class="modal" id="modal-pdf-content">
+    <div class="modal-title">🎁 Déposer la carte cadeau</div>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:4px">Filleul : <strong style="color:#fff" id="pdf-filleul-label">—</strong></p>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px">Enseigne : <strong style="color:#f0c800" id="pdf-enseigne-label">—</strong></p>
+
+    <div class="pdf-upload-zone" id="pdf-drop-zone" onclick="document.getElementById('pdf-file-input').click()">
+      <div style="font-size:32px">📄</div>
+      <p>Cliquez pour sélectionner un PDF</p>
+      <p>ou glissez-déposez ici</p>
+      <div class="pdf-name" id="pdf-file-name" style="display:none"></div>
+    </div>
+    <input type="file" id="pdf-file-input" accept=".pdf" style="display:none" onchange="handlePdfSelect(this)" />
+
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="modal-btn modal-btn-close" onclick="closePdfModal()">Annuler</button>
+      <button class="modal-btn modal-btn-validate" id="pdf-confirm-btn" onclick="confirmerPdf()" disabled style="opacity:0.4">✓ Valider et envoyer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---- AUTH ----
+  const ADMIN_EMAIL = 'xenoniptvofficiel@gmail.com';
+  const ADMIN_PASSWORD = 'XenonAdmin2024!';
+
+  function login() {
+    const email = document.getElementById('login-email').value.trim();
+    const pw = document.getElementById('login-password').value;
+    const err = document.getElementById('login-error');
+
+    if (email === ADMIN_EMAIL && pw === ADMIN_PASSWORD) {
+      err.classList.remove('show');
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-app').classList.add('show');
+      loadAdmin();
+    } else {
+      err.classList.add('show');
+    }
+  }
+
+  function logout() {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('admin-app').classList.remove('show');
+    document.getElementById('login-email').value = '';
+    document.getElementById('login-password').value = '';
+  }
+
+  // ---- DATA ----
+  let parrainages = JSON.parse(localStorage.getItem('parrainages') || '[]');
+  let currentFilter = 'all';
+  let currentParrainage = null;
+
+  const paiementLabels = { paypal: 'PayPal', virement: 'Virement bancaire', carte: 'Carte cadeau', remise: 'Remise abonnement' };
+  const statutLabels = { pending: 'En attente', validated: 'Validé', sent: 'Envoyé', contact: 'Contactez-nous', pdf_ready: 'Récupérer' };
+  const badgeClass = { pending: 'badge-pending', validated: 'badge-validated', sent: 'badge-sent', contact: 'badge-contact', pdf_ready: 'badge-pdf-ready' };
+
+  function loadAdmin() {
+    parrainages = JSON.parse(localStorage.getItem('parrainages') || '[]');
+    updateStats();
+    renderTable();
+  }
+
+  function updateStats() {
+    document.getElementById('stat-total').textContent = parrainages.length;
+    document.getElementById('stat-pending').textContent = parrainages.filter(p => p.statut === 'pending').length;
+    document.getElementById('stat-validated').textContent = parrainages.filter(p => p.statut === 'validated').length;
+    document.getElementById('stat-sent').textContent = parrainages.filter(p => p.statut === 'sent').length;
+  }
+
+  function filterBy(filter, btn) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable();
+  }
+
+  function renderTable() {
+    const filtered = currentFilter === 'all' ? parrainages : parrainages.filter(p => p.statut === currentFilter);
+    const body = document.getElementById('admin-table-body');
+
+    if (!filtered.length) {
+      body.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>Aucun parrainage dans cette catégorie.</p></div>`;
+      return;
+    }
+
+    body.innerHTML = [...filtered].reverse().map(p => `
+      <div class="table-row" style="cursor:pointer" onclick="openModal(${p.id})">
+        <div class="cell">${p.filleul}</div>
+        <div class="cell td-hide cell-dim">${p.parrain || '—'}</div>
+        <div class="cell td-hide cell-dim">${paiementLabels[p.paiement]}</div>
+        <div class="cell cell-dim">${p.date}</div>
+        <div class="cell"><span class="statut-badge ${badgeClass[p.statut]}">${statutLabels[p.statut]}</span></div>
+        <div class="cell" onclick="event.stopPropagation()">
+          ${p.statut === 'pending' ? `<button class="action-btn btn-validate" onclick="openModal(${p.id})">Valider</button>` : ''}
+          ${p.statut === 'validated' ? `<button class="action-btn btn-send" onclick="openModal(${p.id})">Envoyer</button>` : ''}
+          ${p.statut === 'contact' ? `<button class="action-btn" style="background:#7c2d12;color:#fb923c" onclick="openModal(${p.id})">Voir</button>` : ''}
+          ${p.statut === 'pdf_ready' ? `<button class="action-btn btn-done" onclick="openModal(${p.id})">PDF ✓</button>` : ''}
+          ${p.statut === 'sent' ? `<button class="action-btn btn-done" disabled>✓ Terminé</button>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function changeStatut(id, newStatut) {
+    parrainages = parrainages.map(p => p.id === id ? { ...p, statut: newStatut } : p);
+    localStorage.setItem('parrainages', JSON.stringify(parrainages));
+    updateStats();
+    renderTable();
+    closeModal();
+  }
+
+  function openModal(id) {
+    currentParrainage = parrainages.find(p => p.id === id);
+    if (!currentParrainage) return;
+    const p = currentParrainage;
+
+    let paiementDetails = '';
+    if (p.paiement === 'paypal' && p.paiementInfo?.email) paiementDetails = p.paiementInfo.email;
+    if (p.paiement === 'virement' && p.paiementInfo?.iban) paiementDetails = `${p.paiementInfo.nom} — ${p.paiementInfo.iban} (${p.paiementInfo.swift})`;
+    if (p.paiement === 'carte' && p.paiementInfo?.enseigne) paiementDetails = p.paiementInfo.enseigne;
+
+    const pdfBlock = p.pdfData ? `
+      <div class="modal-row">
+        <span class="modal-key">PDF carte cadeau</span>
+        <span class="modal-val"><a href="${p.pdfData}" download="carte_cadeau_xenontv.pdf" style="color:#818cf8;font-size:12px">📄 Télécharger</a></span>
+      </div>` : '';
+
+    document.getElementById('modal-body').innerHTML = `
+      <div class="modal-row"><span class="modal-key">Parrain</span><span class="modal-val">${p.parrain || '—'}</span></div>
+      <div class="modal-row"><span class="modal-key">Filleul</span><span class="modal-val">${p.filleul}</span></div>
+      <div class="modal-row"><span class="modal-key">Date</span><span class="modal-val">${p.date}</span></div>
+      <div class="modal-row"><span class="modal-key">Statut</span><span class="modal-val"><span class="statut-badge ${badgeClass[p.statut]}">${statutLabels[p.statut]}</span></span></div>
+      <div class="modal-row"><span class="modal-key">Récompense</span><span class="modal-val">${paiementLabels[p.paiement]} + 1 mois</span></div>
+      ${paiementDetails ? `<div class="modal-row"><span class="modal-key">Détails</span><span class="modal-val" style="word-break:break-all">${paiementDetails}</span></div>` : ''}
+      ${pdfBlock}
+    `;
+
+    let actions = `<button class="modal-btn modal-btn-close" onclick="closeModal()">Fermer</button>`;
+
+    if (p.statut === 'pending') {
+      if (p.paiement === 'carte') {
+        // Carte cadeau : valider = ouvrir modal PDF
+        actions += `<button class="modal-btn modal-btn-validate" onclick="closeModal();openPdfModal(${p.id})">🎁 Valider + PDF</button>`;
+      } else {
+        // PayPal / Virement : valider ou "Contactez-nous"
+        actions += `<button class="modal-btn" style="background:#7c2d12;color:#fb923c;flex:1" onclick="changeStatut(${p.id},'contact')">⚠ Contactez-nous</button>`;
+        actions += `<button class="modal-btn modal-btn-validate" onclick="changeStatut(${p.id},'validated')">✓ Valider</button>`;
+      }
+    }
+
+    if (p.statut === 'validated') {
+      if (p.paiement === 'carte') {
+        actions += `<button class="modal-btn modal-btn-send" onclick="closeModal();openPdfModal(${p.id})">📄 Déposer PDF</button>`;
+      } else {
+        actions += `<button class="modal-btn modal-btn-send" onclick="changeStatut(${p.id},'sent')">📤 Marquer Envoyé</button>`;
+      }
+    }
+
+    if (p.statut === 'contact') {
+      actions += `<button class="modal-btn modal-btn-validate" onclick="changeStatut(${p.id},'validated')">✓ Valider quand même</button>`;
+    }
+
+    document.getElementById('modal-actions').innerHTML = actions;
+    document.getElementById('modal-overlay').classList.add('show');
+  }
+
+  function closeModal(e) {
+    if (!e || e.target === document.getElementById('modal-overlay')) {
+      document.getElementById('modal-overlay').classList.remove('show');
+    }
+  }
+
+  // ---- PDF MODAL ----
+  let pdfModalId = null;
+  let pdfBase64 = null;
+
+  function openPdfModal(id) {
+    pdfModalId = id;
+    pdfBase64 = null;
+    const p = parrainages.find(x => x.id === id);
+    document.getElementById('pdf-filleul-label').textContent = p.filleul;
+    document.getElementById('pdf-enseigne-label').textContent = p.paiementInfo?.enseigne || '—';
+    document.getElementById('pdf-file-name').style.display = 'none';
+    document.getElementById('pdf-file-name').textContent = '';
+    document.getElementById('pdf-drop-zone').classList.remove('has-file');
+    document.getElementById('pdf-confirm-btn').disabled = true;
+    document.getElementById('pdf-confirm-btn').style.opacity = '0.4';
+    document.getElementById('pdf-file-input').value = '';
+    document.getElementById('modal-pdf-overlay').classList.add('show');
+  }
+
+  function closePdfModal(e) {
+    if (!e || e.target === document.getElementById('modal-pdf-overlay')) {
+      document.getElementById('modal-pdf-overlay').classList.remove('show');
+    }
+  }
+
+  function handlePdfSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      pdfBase64 = e.target.result;
+      document.getElementById('pdf-file-name').textContent = '✓ ' + file.name;
+      document.getElementById('pdf-file-name').style.display = 'block';
+      document.getElementById('pdf-drop-zone').classList.add('has-file');
+      document.getElementById('pdf-confirm-btn').disabled = false;
+      document.getElementById('pdf-confirm-btn').style.opacity = '1';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function confirmerPdf() {
+    if (!pdfBase64 || !pdfModalId) return;
+    parrainages = parrainages.map(p => p.id === pdfModalId ? { ...p, statut: 'pdf_ready', pdfData: pdfBase64 } : p);
+    localStorage.setItem('parrainages', JSON.stringify(parrainages));
+    closePdfModal();
+    updateStats();
+    renderTable();
+  }
+
+  // Refresh auto toutes les 10s
+  setInterval(() => { if (document.getElementById('admin-app').classList.contains('show')) loadAdmin(); }, 10000);
+</script>
+
+</body>
+</html>
