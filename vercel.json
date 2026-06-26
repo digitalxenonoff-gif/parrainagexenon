@@ -1,0 +1,14 @@
+{
+  "functions": {
+    "api/submit.js":       { "memory": 256, "maxDuration": 10 },
+    "api/status.js":       { "memory": 256, "maxDuration": 10 },
+    "api/admin-login.js":  { "memory": 256, "maxDuration": 10 },
+    "api/admin-list.js":   { "memory": 256, "maxDuration": 10 },
+    "api/admin-update.js": { "memory": 256, "maxDuration": 10 },
+    "api/admin-pdf.js":    { "memory": 512, "maxDuration": 15 },
+    "api/ping.js":         { "memory": 128, "maxDuration": 10 }
+  },
+  "crons": [
+    { "path": "/api/ping", "schedule": "0 8 * * *" }
+  ]
+}
