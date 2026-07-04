@@ -11,8 +11,8 @@ module.exports = async function handler(req, res) {
   // Si rempli -> on répond OK mais on n'enregistre rien.
   if (b.website) return res.status(200).json({ ok: true });
 
-  // Anti-spam : 15 soumissions max par IP par heure.
-  const allowed = await rateLimit(`submit:${clientIp(req)}`, 15, 60 * 60 * 1000);
+  // Anti-spam : 3 soumissions max par IP par heure.
+  const allowed = await rateLimit(`submit:${clientIp(req)}`, 3, 60 * 60 * 1000);
   if (!allowed) return res.status(429).json({ error: 'Trop de demandes. Réessayez plus tard.' });
 
   // Validation
